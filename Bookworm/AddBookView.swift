@@ -12,12 +12,20 @@ struct AddBookView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
 
-    @State private var title = ""
-    @State private var author = ""
-    @State private var rating = 3
+    @State private var title = ProcessInfo.processInfo.arguments.contains("-sampleAdd") ? "Project Hail Mary" : ""
+    @State private var author = ProcessInfo.processInfo.arguments.contains("-sampleAdd") ? "Andy Weir" : ""
+    @State private var rating = ProcessInfo.processInfo.arguments.contains("-sampleAdd") ? 5 : 3
     @State private var genre = "Fantasy"
-    @State private var review = ""
+    @State private var review = ProcessInfo.processInfo.arguments.contains("-sampleAdd") ? "A fantastic sci-fi survival story with heart, humor, and incredible science." : ""
     let genres = ["Fantasy", "Horror", "Kids", "Mystery", "Poetry", "Romance", "Thriller"]
+
+    var hasValidForm: Bool {
+        if title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+            author.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return false
+        }
+        return true
+    }
 
     var body: some View {
         NavigationStack {
@@ -45,6 +53,7 @@ struct AddBookView: View {
                         modelContext.insert(newBook)
                         dismiss()
                     }
+                    .disabled(!hasValidForm)
                 }
             }
             .navigationTitle("Add Book")

@@ -17,11 +17,11 @@ struct DetailView: View {
     var body: some View {
         ScrollView {
             ZStack(alignment: .bottomTrailing) {
-                Image(book.genre)
+                Image(book.genre.isEmpty ? "Fantasy" : book.genre)
                     .resizable()
                     .scaledToFit()
 
-                Text(book.genre.uppercased())
+                Text((book.genre.isEmpty ? "Fantasy" : book.genre).uppercased())
                     .font(.caption)
                     .fontWeight(.black)
                     .padding(8)
@@ -33,6 +33,11 @@ struct DetailView: View {
             Text(book.author)
                 .font(.title)
                 .foregroundStyle(.secondary)
+
+            Text(book.date, format: .dateTime.month().day().year())
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.top, 2)
 
             Text(book.review)
                 .padding()
@@ -66,7 +71,7 @@ struct DetailView: View {
     do {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Book.self, configurations: config)
-        let example = Book(title: "Test Book", author: "Test Author", genre: "Fantasy", review: "This was a great book; I really enjoyed it.", rating: 4)
+        let example = Book(title: "Test Book", author: "Test Author", genre: "Fantasy", review: "This was a great book; I really enjoyed it.", rating: 4, date: .now)
 
         return DetailView(book: example)
             .modelContainer(container)
